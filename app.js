@@ -47,7 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             html = html.replace(/\[img\]((?:(?!\[\/?img\])[\s\S])*?)\[\/img\]/gi, (match, url) => {
                 url = url.trim().replace(/["']/g, '');
-                return `<img src="${url}" alt="User Image" title="Klik ganda untuk mengubah link gambar" class="inline-block max-w-full rounded-md shadow-sm my-2 bbcode-img cursor-pointer hover:opacity-80 transition-opacity">`;
+                return `<span class="relative inline-block group bbcode-img-wrapper max-w-full my-2" contenteditable="false">
+                    <img src="${url}" alt="User Image" class="block max-w-full rounded-md shadow-sm bbcode-img">
+                    <div class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center rounded-md cursor-pointer bbcode-img-edit transition-all">
+                        <span class="text-white text-sm font-medium px-3 py-1 bg-gray-900/80 rounded-full"><i class="fa-solid fa-link"></i> Ubah Link</span>
+                    </div>
+                </span>`;
             });
 
             html = html.replace(/\[center\]((?:(?!\[\/?center\])[\s\S])*?)\[\/center\]/gi, '<div style="text-align: center; width: 100%; display: block;" class="bbcode-center">$1</div>');
@@ -91,6 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tag === 'img') return `[img]${node.getAttribute('src')}[/img]`;
 
         if (tag === 'span') {
+            if (node.classList.contains('bbcode-img-wrapper')) {
+                let img = node.querySelector('img');
+                return img ? `[img]${img.getAttribute('src')}[/img]` : '';
+            }
             if (node.classList.contains('bbcode-color') || node.style.color) {
                 let color = node.getAttribute('data-bbcode-color') || node.style.color;
                 return `[color=${color}]${innerBBCode}[/color]`;
@@ -117,10 +126,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (tag === 'details' || node.classList.contains('bbcode-spoiler')) {
-            let title = node.getAttribute('data-bbcode-title') || 'Spoiler';
+            let summaryNode = node.querySelector('summary');
+            let title = summaryNode ? summaryNode.textContent : (node.getAttribute('data-bbcode-title') || 'Spoiler');
             let contentNode = node.querySelector('.bbcode-spoiler-content') || node.querySelector('div');
             let contentBBCode = contentNode ? Array.from(contentNode.childNodes).map(parseHTMLToBBCode).join('') : '';
-            return `[spoiler=${title}]\n${contentBBCode.trim()}\n[/spoiler]`;
+            return `[spoiler=${title.trim()}]\n${contentBBCode.trim()}\n[/spoiler]`;
         }
 
         return innerBBCode;
@@ -157,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let rawHtml = parseBBCode(text);
 
         if (typeof DOMPurify !== 'undefined') {
-            rawHtml = DOMPurify.sanitize(rawHtml, { ADD_ATTR: ['data-bbcode-color', 'data-bbcode-title', 'data-bbcode-size'] });
+            rawHtml = DOMPurify.sanitize(rawHtml, { ADD_ATTR: ['data-bbcode-color', 'data-bbcode-title', 'data-bbcode-size', 'contenteditable'] });
         }
 
         previewOutput.innerHTML = rawHtml;
@@ -190,17 +200,41 @@ document.addEventListener('DOMContentLoaded', () => {
         updateEditorFromPreview();
     });
 
-    previewOutput.addEventListener('dblclick', (e) => {
-        if (e.target.tagName === 'IMG' && e.target.classList.contains('bbcode-img')) {
-            const currentSrc = e.target.getAttribute('src');
-            // If it's a placeholder, provide an empty prompt
-            const defaultPrompt = (currentSrc === 'xxxxx' || currentSrc.includes('via.placeholder.com')) ? '' : currentSrc;
-            const newSrc = prompt('Masukkan URL gambar baru:', defaultPrompt);
+    let currentEditingImg = null;
 
-            if (newSrc !== null && newSrc.trim() !== '') {
-                e.target.setAttribute('src', newSrc.trim());
+    previewOutput.addEventListener('click', (e) => {
+        let editBtn = e.target.closest('.bbcode-img-edit');
+        if (editBtn) {
+            let img = editBtn.parentElement.querySelector('img');
+            if (img) {
+                currentEditingImg = img;
+                const currentSrc = img.getAttribute('src');
+                const defaultPrompt = (currentSrc === 'xxxxx' || currentSrc.includes('via.placeholder.com')) ? '' : currentSrc;
+
+                document.getElementById('img-modal-input').value = defaultPrompt;
+                document.getElementById('img-modal').classList.remove('hidden');
+                document.getElementById('img-modal').classList.add('flex');
+                document.getElementById('img-modal-input').focus();
+            }
+        }
+    });
+
+    document.getElementById('img-modal-cancel').addEventListener('click', () => {
+        document.getElementById('img-modal').classList.add('hidden');
+        document.getElementById('img-modal').classList.remove('flex');
+        currentEditingImg = null;
+    });
+
+    document.getElementById('img-modal-save').addEventListener('click', () => {
+        if (currentEditingImg) {
+            const newSrc = document.getElementById('img-modal-input').value.trim();
+            if (newSrc !== '') {
+                currentEditingImg.setAttribute('src', newSrc);
                 updateEditorFromPreview();
             }
+            document.getElementById('img-modal').classList.add('hidden');
+            document.getElementById('img-modal').classList.remove('flex');
+            currentEditingImg = null;
         }
     });
 
