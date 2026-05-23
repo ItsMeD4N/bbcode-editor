@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function parseBBCode(text) {
         let html = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        html = html.replace(/  /g, ' &nbsp;');
 
         let prevHtml;
         do {
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function parseHTMLToBBCode(node) {
         if (node.nodeType === Node.TEXT_NODE) {
-            return node.textContent;
+            return node.textContent.replace(/\u00A0/g, ' ');
         }
         if (node.nodeType !== Node.ELEMENT_NODE) {
             return '';
@@ -112,25 +113,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (tag === 'div') {
             if (node.classList.contains('bbcode-center') || node.style.textAlign === 'center') {
-                return `[center]${innerBBCode}[/center]`;
+                return `[center]${innerBBCode.replace(/^[\r\n]+|[\r\n]+$/g, '')}[/center]\n`;
             }
             if (node.classList.contains('bbcode-divbox')) {
                 let color = node.getAttribute('data-bbcode-color') || 'white';
-                return `[divbox=${color}]\n${innerBBCode.trim()}\n[/divbox]`;
+                return `[divbox=${color}]\n${innerBBCode.replace(/^[\r\n]+|[\r\n]+$/g, '')}\n[/divbox]\n`;
             }
             if (node.classList.contains('bbcode-subtitle')) {
                 let color = node.getAttribute('data-bbcode-color') || '#11224E';
-                return `[lspdsubtitle=${color}]${innerBBCode}[/lspdsubtitle]`;
+                return `[lspdsubtitle=${color}]${innerBBCode.replace(/^[\r\n]+|[\r\n]+$/g, '')}[/lspdsubtitle]\n`;
             }
             return `\n${innerBBCode}\n`;
         }
 
         if (tag === 'details' || node.classList.contains('bbcode-spoiler')) {
             let summaryNode = node.querySelector('summary');
-            let title = summaryNode ? summaryNode.textContent : (node.getAttribute('data-bbcode-title') || 'Spoiler');
+            let title = summaryNode ? summaryNode.textContent.replace(/\u00A0/g, ' ') : (node.getAttribute('data-bbcode-title') || 'Spoiler');
             let contentNode = node.querySelector('.bbcode-spoiler-content') || node.querySelector('div');
             let contentBBCode = contentNode ? Array.from(contentNode.childNodes).map(parseHTMLToBBCode).join('') : '';
-            return `[spoiler=${title.trim()}]\n${contentBBCode.trim()}\n[/spoiler]`;
+            return `[spoiler=${title.trim()}]\n${contentBBCode.replace(/^[\r\n]+|[\r\n]+$/g, '')}\n[/spoiler]\n`;
         }
 
         return innerBBCode;
@@ -180,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isSyncingToPreview) return;
         isSyncingToEditor = true;
 
-        const parsedBBCode = parseHTMLToBBCode(previewOutput);
+        const parsedBBCode = parseHTMLToBBCode(previewOutput).trim();
         textarea.value = parsedBBCode;
 
         highlightLayer.innerHTML = applyHighlighting(parsedBBCode) + (parsedBBCode.endsWith('\n') ? ' ' : '');
