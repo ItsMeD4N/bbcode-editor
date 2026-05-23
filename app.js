@@ -30,44 +30,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     style = `background-color: ${color};`;
                 }
-                return `<div class="${classes}" style="${style}" data-bbcode-color="${color}">${content}</div>`;
+                return `<div 
+                    class="${classes}" 
+                    style="${style}" 
+                    data-bbcode-color="${color}"
+                >${content}</div>`;
             });
 
             html = html.replace(/\[lspdsubtitle=([^\]]+)\]((?:(?!\[\/?lspdsubtitle[=\]])[\s\S])*?)\[\/lspdsubtitle\]/gi, (match, color, content) => {
                 color = color.trim().replace(/["']/g, '');
-                return `<div style="background-color: ${color};" data-bbcode-color="${color}" class="text-white font-bold p-2 px-4 mb-3 uppercase rounded shadow-sm tracking-wide text-sm bbcode-subtitle">${content}</div>`;
+                return `<div 
+                    style="background-color: ${color};" 
+                    data-bbcode-color="${color}" 
+                    class="text-white font-bold p-2 px-4 mb-3 uppercase rounded shadow-sm tracking-wide text-sm bbcode-subtitle"
+                >${content}</div>`;
             });
 
             html = html.replace(/\[spoiler=([^\]]+)\]((?:(?!\[\/?spoiler[=\]])[\s\S])*?)\[\/spoiler\]/gi, (match, title, content) => {
                 title = title.replace(/["']/g, '');
-                return `<details class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md mb-3 overflow-hidden shadow-sm transition-all duration-300 bbcode-spoiler" data-bbcode-title="${title}">
-                    <summary class="p-3 cursor-pointer font-bold text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors select-none">${title}</summary>
-                    <div class="p-4 text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 bbcode-spoiler-content">${content}</div>
-                </details>`;
+                return `<details 
+                    class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md mb-3 overflow-hidden shadow-sm transition-all duration-300 bbcode-spoiler" 
+                    data-bbcode-title="${title}"
+                ><summary 
+                    class="p-3 cursor-pointer font-bold text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors select-none"
+                >${title}</summary><div 
+                    class="p-4 text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 bbcode-spoiler-content"
+                >${content}</div></details>`;
             });
 
             html = html.replace(/\[img\]((?:(?!\[\/?img\])[\s\S])*?)\[\/img\]/gi, (match, url) => {
                 url = url.trim().replace(/["']/g, '');
-                return `<span class="relative inline-block group bbcode-img-wrapper max-w-full my-2" contenteditable="false">
-                    <img src="${url}" alt="User Image" class="block max-w-full rounded-md shadow-sm bbcode-img">
-                    <div class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center rounded-md cursor-pointer bbcode-img-edit transition-all">
-                        <span class="text-white text-sm font-medium px-3 py-1 bg-gray-900/80 rounded-full"><i class="fa-solid fa-link"></i> Ubah Link</span>
-                    </div>
-                </span>`;
+                return `<span 
+                    class="relative inline-block group bbcode-img-wrapper max-w-full my-2" 
+                    contenteditable="false"
+                ><img 
+                    src="${url}" 
+                    alt="User Image" 
+                    class="block max-w-full rounded-md shadow-sm bbcode-img"
+                ><div 
+                    class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center rounded-md cursor-pointer bbcode-img-edit transition-all"
+                ><span 
+                    class="text-white text-sm font-medium px-3 py-1 bg-gray-900/80 rounded-full"
+                ><i class="fa-solid fa-link"></i> Ubah Link</span></div></span>`;
             });
 
-            html = html.replace(/\[center\]((?:(?!\[\/?center\])[\s\S])*?)\[\/center\]/gi, '<div style="text-align: center; width: 100%; display: block;" class="bbcode-center">$1</div>');
+            html = html.replace(/\[center\]((?:(?!\[\/?center\])[\s\S])*?)\[\/center\]/gi, `<div 
+                style="text-align: center; width: 100%; display: block;" 
+                class="bbcode-center"
+            >$1</div>`);
 
             html = html.replace(/\[b\]((?:(?!\[\/?b\])[\s\S])*?)\[\/b\]/gi, '<strong>$1</strong>');
 
             html = html.replace(/\[size=([^\]]+)\]((?:(?!\[\/?size[=\]])[\s\S])*?)\[\/size\]/gi, (match, size, content) => {
                 size = parseFloat(size) || 100;
-                return `<span style="font-size: ${size}%;" data-bbcode-size="${size}" class="bbcode-size">${content}</span>`;
+                return `<span 
+                    style="font-size: ${size}%;" 
+                    data-bbcode-size="${size}" 
+                    class="bbcode-size"
+                >${content}</span>`;
             });
 
             html = html.replace(/\[color=([^\]]+)\]((?:(?!\[\/?color[=\]])[\s\S])*?)\[\/color\]/gi, (match, color, content) => {
                 color = color.trim().replace(/["']/g, '');
-                return `<span style="color: ${color};" data-bbcode-color="${color}" class="bbcode-color">${content}</span>`;
+                return `<span 
+                    style="color: ${color};" 
+                    data-bbcode-color="${color}" 
+                    class="bbcode-color"
+                >${content}</span>`;
             });
 
         } while (html !== prevHtml);
@@ -256,29 +285,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-download').addEventListener('click', () => {
         const htmlContent = previewOutput.innerHTML;
-        const fullHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LSPD Patrol Report Export</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
-        .bbcode-content { max-width: 800px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); }
-        .dark body { background-color: #111827; color: #f9fafb; }
-        .dark .bbcode-content { background: #1f2937; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5); }
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
-    </style>
-</head>
-<body class="${document.documentElement.classList.contains('dark') ? 'dark' : ''}">
-    <div class="bbcode-content">
-        ${htmlContent}
-    </div>
-</body>
-</html>`;
+        const fullHtml = 
+        `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>LSPD Patrol Report Export</title>
+            
+            <script src="https://cdn.tailwindcss.com"></script>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+            
+            <style>
+                body { 
+                    font-family: 'Inter', sans-serif; 
+                    background-color: #f3f4f6; 
+                    color: #1f2937; 
+                }
+                .bbcode-content { 
+                    max-width: 800px; 
+                    margin: 2rem auto; 
+                    background: white; 
+                    padding: 2rem; 
+                    border-radius: 0.5rem; 
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); 
+                }
+                .dark body { 
+                    background-color: #111827; 
+                    color: #f9fafb; 
+                }
+                .dark .bbcode-content { 
+                    background: #1f2937; 
+                    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5); 
+                }
+                details > summary { 
+                    list-style: none; 
+                }
+                details > summary::-webkit-details-marker { 
+                    display: none; 
+                }
+            </style>
+        </head>
+        <body class="${document.documentElement.classList.contains('dark') ? 'dark' : ''}">
+            <div class="bbcode-content">
+                ${htmlContent}
+            </div>
+        </body>
+        </html>`;
 
         const blob = new Blob([fullHtml], { type: 'text/html' });
         const url = URL.createObjectURL(blob);
