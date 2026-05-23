@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBCode Live Editor</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        editor: {
+                            bg: '#1e1e1e',
+                            text: '#ffffff',
+                            lineNum: '#858585',
+                            lineBg: '#1e1e1e',
+                            cursor: '#aeafad'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body
+    class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 h-screen flex flex-col font-sans transition-colors duration-300">
+
+    <header
+        class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 p-4 flex flex-col sm:flex-row justify-between items-center gap-4 z-10">
+        <div class="flex items-center gap-3">
+            <h1 class="text-xl font-bold tracking-tight">BBCode Editor</h1>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <button id="btn-copy" class="btn btn-secondary" title="Copy BBCode">
+                <i class="fa-regular fa-copy"></i> Copy BBCode
+            </button>
+            <button id="btn-download" class="btn btn-secondary" title="Download HTML">
+                <i class="fa-solid fa-download"></i> DL HTML
+            </button>
+            <button id="btn-export" class="btn btn-primary" title="Export Preview to PNG">
+                <i class="fa-solid fa-camera"></i> Export PNG
+            </button>
+            <button id="btn-clear" class="btn btn-danger" title="Clear Editor">
+                <i class="fa-solid fa-trash"></i> Clear
+            </button>
+            <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-2"></div>
+            <button id="btn-theme" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                title="Toggle Theme">
+                <i class="fa-solid fa-moon text-gray-600 dark:text-gray-300"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+
+        <section
+            class="flex-1 flex flex-col border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-[#3c3c3c] h-1/2 lg:h-full relative bg-editor-bg">
+            <div
+                class="h-10 px-3 bg-gray-100 dark:bg-[#252526] border-b border-gray-200 dark:border-[#3c3c3c] flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 font-mono">
+                <div class="flex gap-4">
+                    <span><i class="fa-solid fa-file-code mr-1"></i> editor.bb</span>
+                    <span id="line-count">1 line</span>
+                </div>
+            </div>
+
+            <div class="editor-container flex-1 overflow-hidden relative flex">
+                <div id="line-numbers"
+                    class="line-numbers bg-editor-lineBg text-editor-lineNum font-mono text-sm py-4 px-2 text-right select-none border-r border-[#404040]">
+                    1
+                </div>
+                <div class="relative flex-1 overflow-hidden bg-editor-bg" id="editor-scroll">
+                    <pre id="highlight-layer"
+                        class="absolute inset-0 p-4 font-mono text-sm text-editor-text whitespace-pre-wrap break-words pointer-events-none z-0 m-0 overflow-hidden"
+                        aria-hidden="true"><code></code></pre>
+                    <textarea id="bbcode-input"
+                        class="absolute inset-0 p-4 font-mono text-sm w-full h-full resize-none bg-transparent text-transparent caret-white outline-none z-10 m-0 whitespace-pre-wrap break-words border-none"
+                        spellcheck="false" placeholder="Type your BBCode here..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <section id="preview-section"
+            class="flex-1 flex flex-col h-1/2 lg:h-full bg-gray-50 dark:bg-[#1e1e1e] relative transition-all duration-300">
+            <div
+                class="h-10 px-3 bg-gray-100 dark:bg-[#252526] border-b border-gray-200 dark:border-[#3c3c3c] flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
+                <span class="font-mono"><i class="fa-solid fa-eye mr-1"></i> Live Preview (Editable)</span>
+                <button id="btn-fullscreen" class="hover:text-gray-800 dark:hover:text-gray-200 px-2 rounded h-full flex items-center justify-center">
+                    <i class="fa-solid fa-expand"></i>
+                </button>
+            </div>
+
+            <div class="preview-container flex-1 overflow-auto p-4 sm:p-8" id="preview-scroll">
+                <div id="preview-output" contenteditable="true"
+                    class="bbcode-content mx-auto max-w-4xl bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 min-h-[500px] transition-colors duration-300 outline-none focus:ring-2 focus:ring-gray-500">
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.3/purify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

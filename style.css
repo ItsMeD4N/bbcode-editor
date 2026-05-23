@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .btn {
+        @apply px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2;
+    }
+    .btn-primary {
+        @apply bg-gray-800 text-white hover:bg-gray-900 active:bg-black dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-white dark:active:bg-gray-100;
+    }
+    .btn-secondary {
+        @apply bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 dark:active:bg-gray-500;
+    }
+    .btn-danger {
+        @apply border border-gray-400 text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800 dark:active:bg-gray-700;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.5);
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(107, 114, 128, 0.8);
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: rgba(75, 85, 99, 0.5);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(107, 114, 128, 0.8);
+}
+
+.hl-bracket { color: #888888; }
+.hl-tag { color: #cccccc; font-weight: bold; }
+.hl-attr { color: #aaaaaa; }
+.hl-equals { color: #888888; }
+.hl-value { color: #eeeeee; }
+
+#bbcode-input, #highlight-layer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    tab-size: 4;
+}
+
+#line-numbers::-webkit-scrollbar {
+    display: none;
+}
+#line-numbers {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    line-height: 1.5;
+}
+
+.bbcode-content {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+}
+
+.bbcode-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.375rem;
+    margin: 0.5rem 0;
+}
+
+.bbcode-content b, .bbcode-content strong {
+    font-weight: bold;
+}
+
+.bbcode-content center {
+    text-align: center;
+    display: block;
+}
+
+details > summary {
+    list-style: none;
+}
+details > summary::-webkit-details-marker {
+    display: none;
+}
+details > summary::before {
+    content: '\f0da';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    display: inline-block;
+    margin-right: 0.5rem;
+    transition: transform 0.2s ease;
+}
+details[open] > summary::before {
+    transform: rotate(90deg);
+}
+details[open] summary ~ * {
+    animation: sweep .3s ease-in-out;
+}
+
+@keyframes sweep {
+    0%    {opacity: 0; margin-top: -10px}
+    100%  {opacity: 1; margin-top: 0px}
+}
+
+.fullscreen-active {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 50;
+}
