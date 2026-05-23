@@ -30,73 +30,73 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     style = `background-color: ${color};`;
                 }
-                return `<div \
-                    class="${classes}" \
-                    style="${style}" \
-                    data-bbcode-color="${color}"\
-                >${content}</div>`;
+                return '<div ' +
+                    `class="${classes}" ` +
+                    `style="${style}" ` +
+                    `data-bbcode-color="${color}"` +
+                    `>${content}</div>`;
             });
 
             html = html.replace(/\[lspdsubtitle=([^\]]+)\]((?:(?!\[\/?lspdsubtitle[=\]])[\s\S])*?)\[\/lspdsubtitle\]/gi, (match, color, content) => {
                 color = color.trim().replace(/["']/g, '');
-                return `<div \
-                    style="background-color: ${color};" \
-                    data-bbcode-color="${color}" \
-                    class="text-white font-bold p-2 px-4 mb-3 uppercase rounded shadow-sm tracking-wide text-sm bbcode-subtitle"\
-                >${content}</div>`;
+                return '<div ' +
+                    `style="background-color: ${color};" ` +
+                    `data-bbcode-color="${color}" ` +
+                    'class="text-white font-bold p-2 px-4 mb-3 uppercase rounded shadow-sm tracking-wide text-sm bbcode-subtitle"' +
+                    `>${content}</div>`;
             });
 
             html = html.replace(/\[spoiler=([^\]]+)\]((?:(?!\[\/?spoiler[=\]])[\s\S])*?)\[\/spoiler\]/gi, (match, title, content) => {
                 title = title.replace(/["']/g, '');
-                return `<details \
-                    class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md mb-3 overflow-hidden shadow-sm transition-all duration-300 bbcode-spoiler" \
-                    data-bbcode-title="${title}"\
-                ><summary \
-                    class="p-3 cursor-pointer font-bold text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors select-none"\
-                >${title}</summary><div \
-                    class="p-4 text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 bbcode-spoiler-content"\
-                >${content}</div></details>`;
+                return '<details ' +
+                    'class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md mb-3 overflow-hidden shadow-sm transition-all duration-300 bbcode-spoiler" ' +
+                    `data-bbcode-title="${title}"` +
+                    '><summary ' +
+                    'class="p-3 cursor-pointer font-bold text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors select-none"' +
+                    `>${title}</summary><div ` +
+                    'class="p-4 text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 bbcode-spoiler-content"' +
+                    `>${content}</div></details>`;
             });
 
             html = html.replace(/\[img\]((?:(?!\[\/?img\])[\s\S])*?)\[\/img\]/gi, (match, url) => {
                 url = url.trim().replace(/["']/g, '');
-                return `<span \
-                    class="relative inline-block group bbcode-img-wrapper max-w-full my-2" \
-                    contenteditable="false"\
-                ><img \
-                    src="${url}" \
-                    alt="User Image" \
-                    class="block max-w-full rounded-md shadow-sm bbcode-img"\
-                ><div \
-                    class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center rounded-md cursor-pointer bbcode-img-edit transition-all"\
-                ><span \
-                    class="text-white text-sm font-medium px-3 py-1 bg-gray-900/80 rounded-full"\
-                ><i class="fa-solid fa-link"></i> Ubah Link</span></div></span>`;
+                return '<span ' +
+                    'class="relative inline-block group bbcode-img-wrapper max-w-full my-2" ' +
+                    'contenteditable="false"' +
+                    '><img ' +
+                    `src="${url}" ` +
+                    'alt="User Image" ' +
+                    'class="block max-w-full rounded-md shadow-sm bbcode-img"' +
+                    '><div ' +
+                    'class="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center rounded-md cursor-pointer bbcode-img-edit transition-all"' +
+                    '><span ' +
+                    'class="text-white text-sm font-medium px-3 py-1 bg-gray-900/80 rounded-full"' +
+                    '><i class="fa-solid fa-link"></i> Ubah Link</span></div></span>';
             });
 
-            html = html.replace(/\[center\]((?:(?!\[\/?center\])[\s\S])*?)\[\/center\]/gi, `<div \
-                style="text-align: center; width: 100%; display: block;" \
-                class="bbcode-center"\
-            >$1</div>`);
+            html = html.replace(/\[center\]((?:(?!\[\/?center\])[\s\S])*?)\[\/center\]/gi, '<div ' +
+                'style="text-align: center; width: 100%; display: block;" ' +
+                'class="bbcode-center"' +
+                `>$1</div>`);
 
             html = html.replace(/\[b\]((?:(?!\[\/?b\])[\s\S])*?)\[\/b\]/gi, '<strong>$1</strong>');
 
             html = html.replace(/\[size=([^\]]+)\]((?:(?!\[\/?size[=\]])[\s\S])*?)\[\/size\]/gi, (match, size, content) => {
                 size = parseFloat(size) || 100;
-                return `<span \
-                    style="font-size: ${size}%;" \
-                    data-bbcode-size="${size}" \
-                    class="bbcode-size"\
-                >${content}</span>`;
+                return '<span ' +
+                    `style="font-size: ${size}%;" ` +
+                    `data-bbcode-size="${size}" ` +
+                    'class="bbcode-size"' +
+                    `>${content}</span>`;
             });
 
             html = html.replace(/\[color=([^\]]+)\]((?:(?!\[\/?color[=\]])[\s\S])*?)\[\/color\]/gi, (match, color, content) => {
                 color = color.trim().replace(/["']/g, '');
-                return `<span \
-                    style="color: ${color};" \
-                    data-bbcode-color="${color}" \
-                    class="bbcode-color"\
-                >${content}</span>`;
+                return '<span ' +
+                    `style="color: ${color};" ` +
+                    `data-bbcode-color="${color}" ` +
+                    'class="bbcode-color"' +
+                    `>${content}</span>`;
             });
 
         } while (html !== prevHtml);
@@ -285,8 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-download').addEventListener('click', () => {
         const htmlContent = previewOutput.innerHTML;
-        const fullHtml = 
-        `<!DOCTYPE html>
+        const fullHtml =
+            `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
