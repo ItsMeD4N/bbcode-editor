@@ -101,6 +101,10 @@
                     <i class="fa-solid fa-image w-4 h-4"></i>
                 </button>
                 <div class="w-px h-4 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+                <button class="tb-btn p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex items-center justify-center" data-tag="divbox" title="Divbox">
+                    <i class="fa-solid fa-box w-4 h-4"></i>
+                </button>
+                <div class="w-px h-4 bg-gray-300 dark:bg-gray-600 mx-1"></div>
                 
                 <div class="flex items-center gap-1 mx-1" title="Text Color">
                     <input type="color" id="tb-color" class="w-6 h-6 p-0 border-0 rounded cursor-pointer bg-transparent" value="#ffffff">
@@ -121,7 +125,7 @@
 
             <div class="editor-container flex-1 overflow-hidden relative flex">
                 <div id="line-numbers"
-                    class="line-numbers bg-editor-lineBg text-editor-lineNum font-mono text-sm py-4 px-2 text-right select-none border-r border-[#404040]">
+                    class="line-numbers overflow-hidden bg-editor-lineBg text-editor-lineNum font-mono text-sm py-4 px-2 text-right select-none border-r border-[#404040]">
                     1
                 </div>
                 <div class="relative flex-1 overflow-hidden bg-editor-bg" id="editor-scroll">
@@ -164,6 +168,19 @@
             <div class="flex justify-end gap-2">
                 <button id="img-modal-cancel" class="btn btn-secondary">Cancel</button>
                 <button id="img-modal-save" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="divbox-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4 transform transition-all">
+            <h3 class="text-lg font-bold mb-4 text-gray-900 dark:text-white">Divbox Color</h3>
+            <input type="text" id="divbox-modal-input"
+                class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded p-2 mb-4 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                placeholder="e.g. white, darkblue, or #ff0000">
+            <div class="flex justify-end gap-2">
+                <button id="divbox-modal-cancel" class="btn btn-secondary">Cancel</button>
+                <button id="divbox-modal-save" class="btn btn-primary">Insert</button>
             </div>
         </div>
     </div>

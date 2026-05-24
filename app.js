@@ -8,6 +8,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let isSyncingToPreview = false;
     let isSyncingToEditor = false;
+    let lastActiveArea = 'editor';
+    let savedSelection = null;
+    
+    const saveSelection = () => {
+        const sel = window.getSelection();
+        if (sel.rangeCount > 0) {
+            const range = sel.getRangeAt(0);
+            if (previewOutput.contains(range.commonAncestorContainer)) {
+                savedSelection = range;
+            }
+        }
+    };
+
+    textarea.addEventListener('focus', () => { lastActiveArea = 'editor'; });
+    textarea.addEventListener('click', () => { lastActiveArea = 'editor'; });
+    textarea.addEventListener('keyup', () => { lastActiveArea = 'editor'; });
+    
+    previewOutput.addEventListener('focus', () => { lastActiveArea = 'preview'; saveSelection(); });
+    previewOutput.addEventListener('keyup', () => { lastActiveArea = 'preview'; saveSelection(); });
+    previewOutput.addEventListener('mouseup', () => { lastActiveArea = 'preview'; saveSelection(); });
 
     const defaultTemplate = ``;
 
@@ -272,6 +292,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    document.getElementById('divbox-modal-cancel').addEventListener('click', () => {
+        document.getElementById('divbox-modal').classList.add('hidden');
+        document.getElementById('divbox-modal').classList.remove('flex');
+    });
+
+    document.getElementById('divbox-modal-save').addEventListener('click', () => {
+        const color = document.getElementById('divbox-modal-input').value.trim() || 'white';
+        if (lastActiveArea === 'preview') {
+            applyToPreview('divbox', color);
+        } else {
+            insertBBCode(`[divbox=${color}]\n`, `\n[/divbox]`);
+        }
+        document.getElementById('divbox-modal').classList.add('hidden');
+        document.getElementById('divbox-modal').classList.remove('flex');
+    });
+
     textarea.addEventListener('scroll', () => {
         highlightLayer.parentElement.scrollTop = textarea.scrollTop;
         highlightLayer.parentElement.scrollLeft = textarea.scrollLeft;
@@ -459,33 +495,121 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePreviewFromEditor();
     }
 
+    function applyToPreview(tag, value = null) {
+        if (!savedSelection) return;
+        
+        previewOutput.focus();
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(savedSelection);
+        
+        if (tag === 'b') {
+            document.execCommand('bold', false, null);
+        } else if (tag === 'i') {
+            document.execCommand('italic', false, null);
+        } else if (tag === 'u') {
+            document.execCommand('underline', false, null);
+        } else if (tag === 'center') {
+            const div = document.createElement('div');
+            div.style.textAlign = 'center';
+            div.style.width = '100%';
+            div.style.display = 'block';
+            div.className = 'bbcode-center';
+            div.appendChild(savedSelection.extractContents());
+            savedSelection.insertNode(div);
+        } else if (tag === 'img') {
+            const img = document.createElement('img');
+            img.src = value;
+            savedSelection.deleteContents();
+            savedSelection.insertNode(img);
+        } else if (tag === 'divbox') {
+            const div = document.createElement('div');
+            let classes = 'p-5 rounded-lg shadow-sm mb-4 transition-colors duration-300 bbcode-divbox ';
+            let style = '';
+            const color = value || 'white';
+            if (color.toLowerCase() === 'white') {
+                classes += 'bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700';
+            } else if (color.toLowerCase() === 'darkblue') {
+                classes += 'bg-blue-900 text-white border border-blue-800';
+            } else {
+                style = `background-color: ${color};`;
+            }
+            div.className = classes;
+            if (style) div.setAttribute('style', style);
+            div.setAttribute('data-bbcode-color', color);
+            div.appendChild(savedSelection.extractContents());
+            savedSelection.insertNode(div);
+        } else if (tag === 'color') {
+            const span = document.createElement('span');
+            span.style.color = value;
+            span.setAttribute('data-bbcode-color', value);
+            span.className = 'bbcode-color';
+            span.appendChild(savedSelection.extractContents());
+            savedSelection.insertNode(span);
+        } else if (tag === 'size') {
+            const span = document.createElement('span');
+            span.style.fontSize = value + '%';
+            span.setAttribute('data-bbcode-size', value);
+            span.className = 'bbcode-size';
+            span.appendChild(savedSelection.extractContents());
+            savedSelection.insertNode(span);
+        }
+
+        updateEditorFromPreview();
+        saveSelection();
+    }
+
     document.querySelectorAll('.tb-btn').forEach(btn => {
+        btn.addEventListener('mousedown', (e) => {
+            if (lastActiveArea === 'preview') {
+                e.preventDefault();
+            }
+        });
         btn.addEventListener('click', (e) => {
             const tag = e.currentTarget.getAttribute('data-tag');
             if (tag === 'img') {
                 const url = prompt('Enter image URL:');
                 if (url) {
-                    insertBBCode(`[img]${url}[/img]`);
+                    if (lastActiveArea === 'preview') {
+                        applyToPreview('img', url);
+                    } else {
+                        insertBBCode(`[img]${url}[/img]`);
+                    }
                 }
+            } else if (tag === 'divbox') {
+                document.getElementById('divbox-modal-input').value = 'white';
+                document.getElementById('divbox-modal').classList.remove('hidden');
+                document.getElementById('divbox-modal').classList.add('flex');
+                document.getElementById('divbox-modal-input').select();
             } else {
-                insertBBCode(`[${tag}]`, `[/${tag}]`);
+                if (lastActiveArea === 'preview') {
+                    applyToPreview(tag);
+                } else {
+                    insertBBCode(`[${tag}]`, `[/${tag}]`);
+                }
             }
         });
     });
 
     const colorPicker = document.getElementById('tb-color');
-    colorPicker.addEventListener('input', (e) => {
-    });
     colorPicker.addEventListener('change', (e) => {
         const color = e.target.value;
-        insertBBCode(`[color=${color}]`, `[/color]`);
+        if (lastActiveArea === 'preview') {
+            applyToPreview('color', color);
+        } else {
+            insertBBCode(`[color=${color}]`, `[/color]`);
+        }
     });
 
     const sizeSelect = document.getElementById('tb-size');
     sizeSelect.addEventListener('change', (e) => {
         const size = e.target.value;
         if (size) {
-            insertBBCode(`[size=${size}]`, `[/size]`);
+            if (lastActiveArea === 'preview') {
+                applyToPreview('size', size);
+            } else {
+                insertBBCode(`[size=${size}]`, `[/size]`);
+            }
             sizeSelect.value = '';
         }
     });
