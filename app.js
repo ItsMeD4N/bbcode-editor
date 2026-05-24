@@ -80,6 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 `>$1</div>`);
 
             html = html.replace(/\[b\]((?:(?!\[\/?b\])[\s\S])*?)\[\/b\]/gi, '<strong>$1</strong>');
+            html = html.replace(/\[i\]((?:(?!\[\/?i\])[\s\S])*?)\[\/i\]/gi, '<em>$1</em>');
+            html = html.replace(/\[u\]((?:(?!\[\/?u\])[\s\S])*?)\[\/u\]/gi, '<u>$1</u>');
 
             html = html.replace(/\[size=([^\]]+)\]((?:(?!\[\/?size[=\]])[\s\S])*?)\[\/size\]/gi, (match, size, content) => {
                 size = parseFloat(size) || 100;
@@ -123,6 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (tag === 'br') return '\n';
         if (tag === 'strong' || tag === 'b') return `[b]${innerBBCode}[/b]`;
+        if (tag === 'em' || tag === 'i') return `[i]${innerBBCode}[/i]`;
+        if (tag === 'u') return `[u]${innerBBCode}[/u]`;
         if (tag === 'img') return `[img]${node.getAttribute('src')}[/img]`;
 
         if (tag === 'span') {
@@ -435,6 +439,56 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         textarea.value = defaultTemplate;
     }
+
+    function insertBBCode(startTag, endTag = '') {
+        const startPos = textarea.selectionStart;
+        const endPos = textarea.selectionEnd;
+        const selectedText = textarea.value.substring(startPos, endPos);
+        const beforeText = textarea.value.substring(0, startPos);
+        const afterText = textarea.value.substring(endPos);
+
+        textarea.value = beforeText + startTag + selectedText + endTag + afterText;
+        
+        textarea.focus();
+        if (selectedText.length > 0) {
+            textarea.setSelectionRange(startPos + startTag.length, startPos + startTag.length + selectedText.length);
+        } else {
+            textarea.setSelectionRange(startPos + startTag.length, startPos + startTag.length);
+        }
+        
+        updatePreviewFromEditor();
+    }
+
+    document.querySelectorAll('.tb-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const tag = e.currentTarget.getAttribute('data-tag');
+            if (tag === 'img') {
+                const url = prompt('Enter image URL:');
+                if (url) {
+                    insertBBCode(`[img]${url}[/img]`);
+                }
+            } else {
+                insertBBCode(`[${tag}]`, `[/${tag}]`);
+            }
+        });
+    });
+
+    const colorPicker = document.getElementById('tb-color');
+    colorPicker.addEventListener('input', (e) => {
+    });
+    colorPicker.addEventListener('change', (e) => {
+        const color = e.target.value;
+        insertBBCode(`[color=${color}]`, `[/color]`);
+    });
+
+    const sizeSelect = document.getElementById('tb-size');
+    sizeSelect.addEventListener('change', (e) => {
+        const size = e.target.value;
+        if (size) {
+            insertBBCode(`[size=${size}]`, `[/size]`);
+            sizeSelect.value = '';
+        }
+    });
 
     textarea.focus();
     updatePreviewFromEditor();

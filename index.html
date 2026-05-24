@@ -82,6 +82,42 @@
                     <span id="line-count">1 line</span>
                 </div>
             </div>
+            <div class="flex flex-wrap items-center gap-1 p-2 bg-gray-100 dark:bg-[#252526] border-b border-gray-200 dark:border-[#3c3c3c] z-20">
+                <button class="tb-btn p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex items-center justify-center" data-tag="b" title="Bold">
+                    <i class="fa-solid fa-bold w-4 h-4"></i>
+                </button>
+                <button class="tb-btn p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex items-center justify-center" data-tag="i" title="Italic">
+                    <i class="fa-solid fa-italic w-4 h-4"></i>
+                </button>
+                <button class="tb-btn p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex items-center justify-center" data-tag="u" title="Underline">
+                    <i class="fa-solid fa-underline w-4 h-4"></i>
+                </button>
+                <div class="w-px h-4 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+                <button class="tb-btn p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex items-center justify-center" data-tag="center" title="Center">
+                    <i class="fa-solid fa-align-center w-4 h-4"></i>
+                </button>
+                <div class="w-px h-4 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+                <button class="tb-btn p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex items-center justify-center" data-tag="img" title="Image">
+                    <i class="fa-solid fa-image w-4 h-4"></i>
+                </button>
+                <div class="w-px h-4 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+                
+                <div class="flex items-center gap-1 mx-1" title="Text Color">
+                    <input type="color" id="tb-color" class="w-6 h-6 p-0 border-0 rounded cursor-pointer bg-transparent" value="#ffffff">
+                </div>
+                
+                <div class="flex items-center gap-1 mx-1" title="Text Size">
+                    <select id="tb-size" class="text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded p-1 outline-none focus:ring-1 focus:ring-gray-500">
+                        <option value="">Size</option>
+                        <option value="50">50%</option>
+                        <option value="80">80%</option>
+                        <option value="100">100%</option>
+                        <option value="120">120%</option>
+                        <option value="150">150%</option>
+                        <option value="200">200%</option>
+                    </select>
+                </div>
+            </div>
 
             <div class="editor-container flex-1 overflow-hidden relative flex">
                 <div id="line-numbers"
